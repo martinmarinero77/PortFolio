@@ -1,0 +1,287 @@
+/* 1. Scroll suave para los enlaces internos (anclas) */
+html {
+    scroll-behavior: smooth;
+    background-color: #121212;
+    /* Fondo muy oscuro, estilo premium */
+}
+
+body {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+/* 2. Efecto Glassmorphism para el Navbar */
+.glass-navbar {
+    background: rgba(18, 18, 18, 0.7) !important;
+    /* Semi-transparente */
+    backdrop-filter: blur(10px);
+    /* Efecto borroso por detrás */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 3. Animación "Hover" (flotar) para las tarjetas */
+.card-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-8px);
+    /* Eleva la tarjeta */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4) !important;
+    border-color: #ffc107 !important;
+    /* Borde amarillo sutil */
+}
+
+/* 4. Efecto Typewriter Manual (Opción A) */
+.typewriter-text {
+    overflow: hidden;
+    /* Oculta el texto que todavía no se "tipeó" */
+    border-right: .15em solid #ffc107;
+    /* El cursor amarillo */
+    white-space: nowrap;
+    /* Evita que el texto baje de línea */
+    margin: 0 auto;
+    letter-spacing: .15em;
+    /* Animación: typing agranda el ancho de 0 a 100%, blink titila el cursor */
+    animation:
+        typing 3.5s steps(40, end),
+        blink-caret .75s step-end infinite;
+}
+
+@keyframes typing {
+    from {
+        width: 0
+    }
+
+    to {
+        width: 100%
+    }
+}
+
+@keyframes blink-caret {
+
+    from,
+    to {
+        border-color: transparent
+    }
+
+    50% {
+        border-color: #ffc107;
+    }
+}
+
+/* --- NUEVOS ESTILOS PREMIUM --- */
+
+/* 5. Navbar flotante (estilo píldora) */
+.floating-nav {
+    border-radius: 50px;
+    margin-top: 1rem !important;
+    padding: 0.5rem 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    /* Transición suave para el cambio de tema */
+    transition: background-color 0.3s ease, border 0.3s ease;
+}
+
+/* 6. Texto con gradiente de color moderno */
+.text-gradient {
+    background: linear-gradient(90deg, #ffc107 0%, #ff5722 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    /* Evita que el gradiente se rompa con el Typewriter */
+    display: inline-block;
+}
+
+/* ===== SECCIÓN WELCOME / HERO ===== */
+/* Imagen de perfil circular con glow terracota */
+.hero-img {
+    width: 280px;
+    height: 280px;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0 0 40px rgba(193, 122, 94, 0.6),
+        0 0 80px rgba(193, 122, 94, 0.3);
+    border: 4px solid rgba(193, 122, 94, 0.4);
+}
+
+/* Efecto de gradiente de luz ambiental en el fondo del Hero */
+.hero-glow-bg {
+    background: radial-gradient(ellipse at bottom center,
+            rgba(193, 122, 94, 0.15) 0%,
+            transparent 70%);
+    pointer-events: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+}
+
+/* ===== SECCIÓN SOBRE MÍ - ESTILO BLOB Y MODAL ===== */
+
+/* La tarjeta blob orgánica */
+.blob-card {
+    background-color: #c17a5e;
+    color: white;
+    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    padding: 2.5rem 2rem;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: none;
+    box-shadow: 0 8px 30px rgba(193, 122, 94, 0.35);
+}
+
+.blob-card:hover {
+    transform: scale(1.05) rotate(-2deg);
+    box-shadow: 0 15px 40px rgba(193, 122, 94, 0.5);
+}
+
+.blob-card .blob-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.blob-card .blob-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+/* Fondo oscuro detrás del modal (overlay) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    /* Animación de entrada */
+    animation: fadeIn 0.2s ease;
+}
+
+/* El contenido del modal */
+.modal-content-custom {
+    background-color: #c17a5e;
+    color: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    max-width: 600px;
+    width: 100%;
+    position: relative;
+    max-height: 80vh;
+    overflow-y: auto;
+    /* Animación de entrada */
+    animation: slideUp 0.3s ease;
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1.25rem;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.8rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+/* Acento de color detrás de una palabra del título */
+.title-highlight {
+    position: relative;
+    display: inline-block;
+}
+
+.title-highlight::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: -5px;
+    right: -5px;
+    height: 40%;
+    background-color: rgba(193, 122, 94, 0.4);
+    z-index: -1;
+    border-radius: 4px;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== SECCIÓN SKILLS: TECH CHIPS ===== */
+
+.skills-category-card {
+    border-radius: 20px;
+    padding: 2rem;
+    transition: transform 0.3s ease;
+}
+
+.skills-category-card:hover {
+    transform: translateY(-5px);
+}
+
+.category-title {
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #c17a5e;
+    margin-bottom: 1.5rem;
+}
+
+.tech-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 0.75rem;
+    border-radius: 14px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: default;
+}
+
+.tech-chip:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(193, 122, 94, 0.3);
+}
+
+.tech-chip i {
+    font-size: 2.5rem;
+    line-height: 1;
+}
+
+.tech-chip span {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
