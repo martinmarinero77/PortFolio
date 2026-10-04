@@ -1,250 +1,382 @@
-/* ------------------------------------------------------------------ *
- * LlmAvatarAssistant global styles
- *
- * Design goals:
- *  - The host page is a normal portfolio SPA; the assistant floats
- *    above it with a transparent background so only the model, the
- *    input field and the speech bubble are visible.
- *  - The speech bubble grows up to a max height, then scrolls, and
- *    has a comic-style tail pointing at the avatar.
- *  - The avatar canvas is transparent (three.js alpha:true) so the
- *    page shows through the model's background.
- * ------------------------------------------------------------------ */
+/* ============================================
+   CHAT DE SOPORTE - Paleta Portfolio (Terracota + Oscuro)
+   ============================================ */
 
-:root {
-  --lav-surface: rgba(17, 18, 26, 0.72);
-  --lav-surface-border: rgba(255, 255, 255, 0.14);
-  --lav-text: #f4f5f8;
-  --lav-muted: rgba(244, 245, 248, 0.62);
-  --lav-accent: #7c9bff;
-  --lav-accent-soft: rgba(124, 155, 255, 0.18);
-  --lav-error: #ff7a7a;
-  --lav-radius: 14px;
-  --lav-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-  font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
-}
-
-/* ------------------------------------------------------------------ *
- * Floating component root
- * ------------------------------------------------------------------ */
-
-.lav-root {
+/* El widget flota en la esquina inferior derecha */
+.chat-widget {
   position: fixed;
-  z-index: 9999;
-  width: 340px;
+  bottom: 100px;
+  /* deja espacio para el botón toggle */
+  right: 20px;
+  width: 300px;
+  max-height: 450px;
   display: flex;
   flex-direction: column;
+  border-radius: 20px;
+  overflow: hidden;
+  z-index: 9999;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(193, 122, 94, 0.2);
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  /* Glassmorphism igual que el navbar */
+  background: rgba(18, 18, 18, 0.92);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(193, 122, 94, 0.25);
+}
+
+/* ── Encabezado ── */
+.chat-header {
+  display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px;
-  /* intentionally transparent: only the three parts show through */
-  background: transparent;
-  border: none;
-  color: var(--lav-text);
-  user-select: none;
-  /* let the page scroll through the transparent gaps */
-  pointer-events: none;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(193, 122, 94, 0.15);
+  border-bottom: 1px solid rgba(193, 122, 94, 0.2);
 }
 
-.lav-root > * {
-  pointer-events: auto;
+.chat-header-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(193, 122, 94, 0.1);
+  border: 2px solid rgba(193, 122, 94, 0.4);
+  flex-shrink: 0;
 }
 
-.lav-side--left { left: 16px; top: 50%; transform: translateY(-50%); }
-.lav-side--right { right: 16px; top: 50%; transform: translateY(-50%); }
-.lav-side--bottom-left { left: 16px; bottom: 16px; transform: none; }
-.lav-side--bottom-right { right: 16px; bottom: 16px; transform: none; }
+/* El canvas 3D dentro del header */
+.chat-header-avatar canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
 
-/* ------------------------------------------------------------------ *
- * Speech bubble (comic style, tail points down at the avatar)
- * ------------------------------------------------------------------ */
+.chat-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
 
-.lav-bubble {
-  position: relative;
-  width: 100%;
-  max-height: 240px;
+.chat-header-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #f4f5f8;
+}
+
+.chat-header-status {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.chat-header-status.online {
+  color: #5eebb5;
+  /* verde suave */
+}
+
+.chat-header-status.typing {
+  color: #c17a5e;
+  /* terracota */
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* ── Cuerpo del chat (historial) ── */
+.chat-body {
+  flex: 1;
   overflow-y: auto;
-  padding: 12px 14px;
-  background: var(--lav-surface);
-  border: 1px solid var(--lav-surface-border);
-  border-radius: var(--lav-radius);
-  box-shadow: var(--lav-shadow);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  font-size: 0.88rem;
-  line-height: 1.45;
-  white-space: pre-wrap;
-  word-break: break-word;
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 200px;
+  max-height: 260px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(193, 122, 94, 0.3) transparent;
 }
 
-.lav-bubble[hidden] { display: none; }
-
-/* tail: a rotated square with a border, positioned under the bubble */
-.lav-bubble::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: -10px;
-  width: 18px;
-  height: 18px;
-  background: var(--lav-surface);
-  border-right: 1px solid var(--lav-surface-border);
-  border-bottom: 1px solid var(--lav-surface-border);
-  transform: translateX(-50%) rotate(45deg);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+.chat-body::-webkit-scrollbar {
+  width: 4px;
 }
 
-.lav-bubble.lav-bubble--typing {
-  /* subtle pulse while waiting for the model */
-  animation: lav-pulse 1.6s ease-in-out infinite;
-}
-
-@keyframes lav-pulse {
-  0%, 100% { box-shadow: var(--lav-shadow); }
-  50%      { box-shadow: 0 10px 30px rgba(124, 155, 255, 0.35); }
-}
-
-.lav-bubble-section-link {
-  color: var(--lav-accent);
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-/* ------------------------------------------------------------------ *
- * Avatar canvas (three.js)
- * ------------------------------------------------------------------ */
-
-.lav-avatar-wrap {
-  position: relative;
-  width: 180px;
-  height: 220px;
+.chat-body::-webkit-scrollbar-track {
   background: transparent;
-  /* no border, no shadow: the model must look like it is floating
-     on top of the page with nothing behind it */
 }
 
-.lav-avatar-wrap canvas {
-  display: block;
+.chat-body::-webkit-scrollbar-thumb {
+  background: rgba(193, 122, 94, 0.4);
+  border-radius: 4px;
+}
+
+/* ── Mensajes individuales ── */
+.chat-message {
+  display: flex;
+  max-width: 85%;
+}
+
+/* Los mensajes del usuario van a la derecha */
+.chat-message--user {
+  align-self: flex-end;
+}
+
+/* Los del asistente van a la izquierda */
+.chat-message--assistant {
+  align-self: flex-start;
+}
+
+.chat-bubble {
+  padding: 10px 14px;
+  border-radius: 18px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+/* Burbuja del USUARIO: terracota */
+.chat-message--user .chat-bubble {
+  background: linear-gradient(135deg, #c17a5e, #a85e42);
+  color: #ffffff;
+  border-bottom-right-radius: 4px;
+}
+
+/* Burbuja del ASISTENTE: gris oscuro */
+.chat-message--assistant .chat-bubble {
+  background: rgba(255, 255, 255, 0.07);
+  color: #e8e8e8;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom-left-radius: 4px;
+}
+
+/* Burbuja con texto en streaming */
+.chat-bubble--streaming {
+  background: rgba(193, 122, 94, 0.08) !important;
+  border-color: rgba(193, 122, 94, 0.3) !important;
+}
+
+/* Cursor parpadeante mientras la IA escribe */
+.chat-cursor {
+  display: inline-block;
+  animation: blink 0.8s step-end infinite;
+  color: #c17a5e;
+  margin-left: 2px;
+}
+
+@keyframes blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Indicador de "pensando" (tres puntos) */
+.chat-bubble--thinking {
+  display: flex;
+  gap: 5px;
+  padding: 12px 16px;
+  align-items: center;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  background-color: #c17a5e;
+  border-radius: 50%;
+  animation: bounce 1.2s infinite;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+
+  30% {
+    transform: translateY(-6px);
+  }
+}
+
+/* Link clicable para auto-scroll a una sección */
+.chat-section-link {
+  text-decoration: underline;
+  text-decoration-color: rgba(193, 122, 94, 0.5);
+  text-underline-offset: 2px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #e09070;
+  transition: color 0.2s;
+}
+
+.chat-section-link:hover {
+  color: #c17a5e;
+}
+
+/* ── Mensaje de error ── */
+.chat-error {
+  margin: 0 12px;
+  padding: 8px 12px;
+  background: rgba(255, 100, 100, 0.1);
+  border: 1px solid rgba(255, 100, 100, 0.3);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: #ff9090;
+}
+
+/* ── Fila de input ── */
+.chat-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.chat-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 10px 16px;
+  color: #f4f5f8;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.chat-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.chat-input:focus {
+  border-color: rgba(193, 122, 94, 0.6);
+  background: rgba(193, 122, 94, 0.05);
+}
+
+.chat-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.chat-send-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #c17a5e, #a85e42);
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-send-btn:hover:not(:disabled) {
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(193, 122, 94, 0.5);
+}
+
+.chat-send-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Fallback cuando falla Three.js */
+.chat-avatar-fallback {
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
-  background: transparent;
 }
 
-.lav-avatar-status {
-  position: absolute;
-  left: 50%;
-  bottom: -2px;
-  transform: translateX(-50%);
-  font-size: 0.65rem;
-  color: var(--lav-muted);
-  background: rgba(0, 0, 0, 0.25);
-  padding: 1px 8px;
-  border-radius: 8px;
-  white-space: nowrap;
+/* ============================================
+   TEMA CLARO: sobreescribe los colores base
+   ============================================ */
+.chat-widget--light {
+  background: rgba(255, 252, 250, 0.98);
+  border-color: rgba(193, 122, 94, 0.3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(193, 122, 94, 0.2);
 }
 
-/* ------------------------------------------------------------------ *
- * Input row
- * ------------------------------------------------------------------ */
-
-.lav-input-row {
-  display: flex;
-  gap: 6px;
-  width: 100%;
+.chat-widget--light .chat-header {
+  background: rgba(193, 122, 94, 0.68);
+  border-bottom-color: rgba(193, 122, 94, 0.2);
 }
 
-.lav-input {
-  flex: 1 1 auto;
-  min-width: 0;
-  padding: 10px 12px;
-  font-size: 0.88rem;
-  color: var(--lav-text);
-  background: var(--lav-surface);
-  border: 1px solid var(--lav-surface-border);
-  border-radius: var(--lav-radius);
-  outline: none;
-  transition: border-color 0.15s ease;
+.chat-widget--light .chat-header-name {
+  color: #2d2d2d;
 }
 
-.lav-input::placeholder { color: var(--lav-muted); }
-.lav-input:focus { border-color: var(--lav-accent); }
-
-.lav-send {
-  padding: 10px 14px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #0b1020;
-  background: var(--lav-accent);
-  border: none;
-  border-radius: var(--lav-radius);
-  cursor: pointer;
-  transition: filter 0.15s ease;
-}
-.lav-send:hover:not(:disabled) { filter: brightness(1.08); }
-.lav-send:disabled { opacity: 0.5; cursor: not-allowed; }
-
-.lav-error {
-  width: 100%;
-  font-size: 0.75rem;
-  color: var(--lav-error);
-  padding: 4px 6px;
+.chat-widget--light .chat-message--assistant .chat-bubble {
+  background: rgba(0, 0, 0, 0.05);
+  color: #333333;
+  border-color: rgba(0, 0, 0, 0.08);
 }
 
-/* ------------------------------------------------------------------ *
- * Demo host page (the portfolio we scroll to)
- * ------------------------------------------------------------------ */
-
-.demo {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 40px 24px 120px;
-  color: #1c1e26;
-  scroll-behavior: smooth;
+.chat-widget--light .chat-input {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #2d2d2d;
 }
 
-.demo h1 { font-size: 2rem; margin-bottom: 0.25rem; }
-.demo .lead { color: #5b6172; margin-top: 0; }
-.demo section { padding: 28px 0; border-top: 1px solid #e4e7ef; }
-.demo h2 { font-size: 1.35rem; margin-top: 0; color: #11131a; }
-.demo section p { color: #3a3f4c; }
-.demo code {
-  background: #eef1f8;
-  padding: 1px 6px;
-  border-radius: 6px;
-  font-size: 0.9em;
+.chat-widget--light .chat-input::placeholder {
+  color: rgba(0, 0, 0, 0.35);
 }
-.demo pre {
-  background: #11131a;
-  color: #e6e8f0;
-  padding: 16px;
-  border-radius: 12px;
-  overflow-x: auto;
-  font-size: 0.85rem;
-  line-height: 1.5;
+
+.chat-widget--light .chat-input:focus {
+  border-color: rgba(193, 122, 94, 0.7);
+  background: rgba(193, 122, 94, 0.04);
 }
-.demo .nav {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin: 18px 0;
+
+.chat-widget--light .chat-input-row {
+  border-top-color: rgba(0, 0, 0, 0.08);
 }
-.demo .nav a {
-  padding: 6px 12px;
-  border-radius: 8px;
-  background: #f1f3f9;
-  color: #333;
-  text-decoration: none;
-  font-size: 0.85rem;
+
+.chat-widget--light .chat-body {
+  scrollbar-color: rgba(193, 122, 94, 0.4) transparent;
 }
-.demo .nav a:hover { background: #e2e6f2; }
-.demo .config-card {
-  background: #f6f7fb;
-  border: 1px solid #e2e6f0;
-  border-radius: 14px;
-  padding: 18px 20px;
+
+/* ===== ACCESIBILIDAD: REDUCIR MOVIMIENTO ===== */
+@media (prefers-reduced-motion: reduce) {
+
+  /* Detener el pulso del indicador de grabación */
+  .chat__recording-indicator {
+    animation: none;
+  }
+
+  /* Detener el parpadeo del cursor */
+  .chat__cursor {
+    animation: none;
+  }
+
+  /* Detener los puntos de carga animados */
+  .chat__typing-dot {
+    animation: none;
+  }
 }
-.demo table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-.demo th, .demo td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #e6e9f2; font-size: 0.9rem; }
-.demo th { color: #11131a; }

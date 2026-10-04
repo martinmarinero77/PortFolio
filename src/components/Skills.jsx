@@ -86,7 +86,8 @@ function Skills({ isDarkMode }) {
       <div className="container py-5">
         <h2 className="text-center mb-4 display-5 fw-bold">Habilidades y Tecnologías</h2>
 
-        <div className="text-center lead mb-5 text-warning fs-3">
+        <div className={`text-center lead mb-5 fs-3 ${isDarkMode ? 'text-warning' : ''}`}
+          style={isDarkMode ? {} : { color: '#7a5c00' }}>
           <Typewriter
             options={{
               strings: [

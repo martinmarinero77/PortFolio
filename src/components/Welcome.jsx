@@ -1,16 +1,16 @@
 import Typewriter from 'typewriter-effect';
 import heroImg from '../assets/hero.png';
 
-function Welcome({ isDarkMode }) {
+function Welcome({ isDarkMode, onContactOpen }) {
     return (
         <section
             id="inicio"
-            className={`py-5 vh-100 d-flex align-items-center position-relative overflow-hidden ${isDarkMode ? 'bg-dark text-white' : 'bg-light text-dark'}`}
+            className={`py-5 min-vh-100 d-flex align-items-center position-relative overflow-hidden ${isDarkMode ? 'bg-dark text-white' : 'bg-light text-dark'}`}
         >
             {/* Gradiente de ambiente (decorativo) */}
             <div className="hero-glow-bg"></div>
 
-            <div className="container position-relative">
+            <div className="container position-relative mt-4">
                 <div className="row align-items-center g-5">
 
                     {/* ── Columna IZQUIERDA: Texto ── */}
@@ -21,7 +21,7 @@ function Welcome({ isDarkMode }) {
                         </h1>
 
                         {/* Efecto Typewriter de la librería npm */}
-                        <h4 className="fw-normal mb-4 text-secondary">
+                        <div className="fs-4 fw-normal mb-4 text-secondary">
                             <Typewriter
                                 options={{
                                     strings: [
@@ -35,7 +35,7 @@ function Welcome({ isDarkMode }) {
                                     deleteSpeed: 30,
                                 }}
                             />
-                        </h4>
+                        </div>
 
                         <p className="lead mb-2">
                             Un gusto que estés por acá. Soy un apasionado por la tecnología
@@ -46,13 +46,13 @@ function Welcome({ isDarkMode }) {
                             ¡navegá por la web!
                         </p>
 
-                        <a
-                            href="#sobre-mi"
+                        <button
+                            onClick={onContactOpen}
                             className="btn btn-lg px-5 py-3 rounded-pill shadow-lg fw-bold"
                             style={{ backgroundColor: '#c17a5e', color: 'white', border: 'none' }}
                         >
-                            Sobre mí
-                        </a>
+                            Contáctame 📬
+                        </button>
                     </div>
 
                     {/* ── Columna DERECHA: Imagen ── */}
@@ -66,7 +66,7 @@ function Welcome({ isDarkMode }) {
 
                 </div>
             </div>
-        </section>
+        </section >
     );
 }
 

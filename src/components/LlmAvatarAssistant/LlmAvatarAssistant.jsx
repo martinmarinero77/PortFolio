@@ -1,16 +1,5 @@
 /**
- * LlmAvatarAssistant.jsx
- *
- * The floating, configurable component. Three parts, in order:
- *   1. Speech bubble (response) — comic style, scrollable, above the avatar.
- *   2. The 3D avatar (three.js) — spins while a query is running.
- *   3. Question input — below the avatar, per the brief.
- *
- * Everything else is transparent: only these three things show.
- *
- * Config (see DEFAULT_CONFIG) covers the llama.cpp / OpenAI-compatible
- * endpoint, model, key, the default text, the model file URL, the side, and
- * how sections are discovered for auto-scroll.
+ * LlmAvatarAssistant.jsx — Rediseñado como chat de soporte con historial.
  */
 import React, {
   useState, useRef, useEffect, useMemo, useCallback,
@@ -18,36 +7,18 @@ import React, {
 import AvatarCanvas from './AvatarCanvas.jsx';
 import { createLlmClient, normalizeLlmConfig } from './llmClient.js';
 import { collectSections, findSectionReference, scrollToSection } from './sectionScanner.js';
-import { displayMarkdown } from './utils.js';
 
-/**
- * Isolate the 3D avatar in its own error boundary. three.js can throw during
- * render (e.g. WebGL shader compile in headless or constrained GPUs); without
- * this, the exception would unmount the entire assistant. The boundary renders
- * a lightweight 2D fallback so the chat + auto-scroll keep working.
- */
+// ── Error boundary para Three.js (sin cambios) ──
 class AvatarErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { failed: false };
-  }
-
-  static getDerivedStateFromError() {
-    return { failed: true };
-  }
-
+  constructor(props) { super(props); this.state = { failed: false }; }
+  static getDerivedStateFromError() { return { failed: true }; }
   componentDidCatch(error) {
-    // Intentionally non-throwing; log for debugging only.
-    // eslint-disable-next-line no-console
     if (typeof console !== 'undefined') console.warn('AvatarCanvas error:', error?.message || error);
   }
-
   render() {
     if (this.state.failed) {
       return (
-        <div className="lav-avatar-wrap" style={{ width: 180, height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
-          <div style={{ fontSize: '2.2rem' }} aria-label="avatar fallback" role="img">🤖</div>
-        </div>
+        <div className="chat-avatar-fallback">🤖</div>
       );
     }
     return this.props.children;
@@ -55,53 +26,43 @@ class AvatarErrorBoundary extends React.Component {
 }
 
 const DEFAULT_CONFIG = {
-  baseUrl: '/v1',                  // same-origin dev proxy -> llama.cpp
+  baseUrl: '/v1',
   apiKey: '',
   model: 'default',
   temperature: 0.7,
-  defaultText: 'Hi! I live on this page. Ask me anything about it.',
+  defaultText: '¡Hola! Soy el asistente de este portfolio. ¿En qué te puedo ayudar?',
   modelUrl: 'models/robot.glb',
-  side: 'right',                  // right | left
-  corner: null,                   // null | 'bottom-left' | 'bottom-right'
-  maxBubbleHeight: 240,
-  sectionDiscovery: 'auto',       // 'auto' | explicit list of {id,title,aliases[]}
-  systemPrompt:
-    'You are a friendly assistant embedded in this page. ' +
-    'Answer concisely (2–4 sentences). ' +
-    'When relevant, mention ONE of the on-page sections by its exact title ' +
-    'so the user can be taken there. Do not invent sections.',
+  side: 'right',
+  corner: null,
+  sectionDiscovery: 'auto',
+  systemPrompt: 'Sos un asistente amigable integrado en esta página.',
   streaming: true,
 };
 
 export { DEFAULT_CONFIG };
 
-export default function LlmAvatarAssistant({
-  config = {},
-  onScrollToSection,      // optional escape hatch: (section) => void
-  onSend,                 // optional: (question, response) => void
-}) {
+export default function LlmAvatarAssistant({ config = {}, isDarkMode = true, onScrollToSection, onSend }) {
   const cfg = useMemo(() => ({ ...DEFAULT_CONFIG, ...config }), [config]);
 
   const [input, setInput] = useState('');
-  const [response, setResponse] = useState(cfg.defaultText);
+  // CAMBIO CLAVE: en lugar de un string, ahora tenemos un ARREGLO de mensajes
+  const [messages, setMessages] = useState([
+    { role: 'assistant', text: cfg.defaultText, id: 0 }
+  ]);
+  // streamingText guarda el texto parcial que llega mientras la IA escribe
+  const [streamingText, setStreamingText] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  const [modelStatus, setModelStatus] = useState('loading');
-  const [matchedSection, setMatchedSection] = useState(null);
 
-  const bubbleRef = useRef(null);
-  const inputRef = useRef(null);
+  const chatBodyRef = useRef(null);
   const clientRef = useRef(null);
   const sectionsRef = useRef([]);
+  const msgIdRef = useRef(1);
 
-  // Build the client once per config change.
+  // Inicializar el cliente LLM
   useEffect(() => {
     const res = normalizeLlmConfig(cfg);
-    if (!res.ok) {
-      setError(res.error);
-      clientRef.current = null;
-      return;
-    }
+    if (!res.ok) { setError(res.error); clientRef.current = null; return; }
     clientRef.current = createLlmClient({
       baseUrl: res.value.baseUrl,
       apiKey: res.value.apiKey,
@@ -112,29 +73,19 @@ export default function LlmAvatarAssistant({
     setError('');
   }, [cfg]);
 
-  // (Re)discover sections on mount and on config change.
+  // Descubrir secciones de la página
   useEffect(() => {
     const list = collectSections(document, cfg.sectionDiscovery === 'auto' ? null : cfg.sectionDiscovery);
     sectionsRef.current = list;
   }, [cfg.sectionDiscovery]);
 
-  // Keep the bubble pinned to the newest text while the model streams.
-  const stickToBottom = useRef(true);
+  // Auto-scroll al último mensaje
   useEffect(() => {
-    const el = bubbleRef.current;
-    if (!el) return;
-    if (stickToBottom.current) el.scrollTop = el.scrollHeight;
-  }, [response, busy]);
-
-  const handleBubbleScroll = useCallback(() => {
-    const el = bubbleRef.current;
-    if (!el) return;
-    const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 24;
-    stickToBottom.current = atBottom;
-  }, []);
+    const el = chatBodyRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [messages, streamingText]);
 
   const performScroll = useCallback((section) => {
-    setMatchedSection(section);
     const ok = scrollToSection(section.id, { behavior: 'smooth', offset: 64 });
     if (onScrollToSection && ok) onScrollToSection(section);
   }, [onScrollToSection]);
@@ -143,140 +94,160 @@ export default function LlmAvatarAssistant({
     const q = (text ?? input).trim();
     if (!q || busy) return;
     const client = clientRef.current;
-    if (!client) {
-      setError(client ? error : 'The assistant is not configured. Set a valid base URL.');
-      return;
-    }
+    if (!client) { setError('El asistente no está configurado.'); return; }
 
+    // 1. Agregar el mensaje del USUARIO al historial
+    const userMsg = { role: 'user', text: q, id: msgIdRef.current++ };
+    setMessages(prev => [...prev, userMsg]);
+    setInput('');
     setError('');
     setBusy(true);
-    setMatchedSection(null);
-    setResponse('');
-    setInput(''); // ← PARA BORRAR EL TEXTO
-    stickToBottom.current = true;
+    setStreamingText('');
 
-    // Give the model enough context about the page so it can reference
-    // sections meaningfully (this is what makes the auto-scroll testable).
-    const pageContext = sectionsRef.current
-      .map((s) => `- ${s.title} (id: ${s.id})`)
-      .join('\n');
-    const messages = [
-      { role: 'system', content: cfg.systemPrompt + (pageContext ? `\n\nOn-page sections:\n${pageContext}` : '') },
+    // 2. Construir los mensajes para la API
+    const pageContext = sectionsRef.current.map((s) => `- ${s.title} (id: ${s.id})`).join('\n');
+    const apiMessages = [
+      { role: 'system', content: cfg.systemPrompt + (pageContext ? `\n\nSecciones de la página:\n${pageContext}` : '') },
       { role: 'user', content: q },
     ];
 
     let full = '';
     try {
       if (cfg.streaming) {
-        full = await client.chatStream(
-          messages,
-          (token, cur) => setResponse(cur),
-        );
+        // Durante el streaming, actualizamos streamingText (texto parcial)
+        full = await client.chatStream(apiMessages, (token, cur) => setStreamingText(cur));
       } else {
-        full = await client.chat(messages);
-        setResponse(full);
+        full = await client.chat(apiMessages);
       }
-      if (!full) setResponse('(empty response)');
+      if (!full) full = '(sin respuesta)';
 
-      // Scan the final answer for a section reference and scroll there.
+      // 3. Al terminar, agregar el mensaje del ASISTENTE al historial y limpiar el streaming
       const ref = findSectionReference(full, sectionsRef.current);
+      const assistantMsg = { role: 'assistant', text: full, id: msgIdRef.current++, sectionRef: ref?.section };
+      setMessages(prev => [...prev, assistantMsg]);
+      setStreamingText('');
+
       if (ref) performScroll(ref.section);
       if (onSend) onSend(q, full);
     } catch (err) {
-      setResponse(prev => (prev || '') + '');
-      setError(err?.message || 'The model request failed.');
+      setError(err?.message || 'Error al contactar el modelo.');
+      setStreamingText('');
     } finally {
       setBusy(false);
     }
-  }, [input, busy, cfg, error, performScroll, onSend]);
+  }, [input, busy, cfg, performScroll, onSend]);
 
-  const submit = (e) => {
-    if (e) e.preventDefault();
-    ask();
-  };
-
-  const sideClass = cfg.corner
-    ? `lav-side--${cfg.corner}`
-    : `lav-side--${cfg.side === 'left' ? 'left' : 'right'}`;
+  const submit = (e) => { if (e) e.preventDefault(); ask(); };
 
   return (
-    <div className={`lav-root ${sideClass}`} data-testid="lav-root" role="region" aria-label="AI assistant">
-      {/* 1 — Response speech bubble */}
-      <div
-        ref={bubbleRef}
-        className={`lav-bubble ${busy ? 'lav-bubble--typing' : ''}`}
-        data-testid="lav-bubble"
-        onScroll={handleBubbleScroll}
-        style={{ maxHeight: cfg.maxBubbleHeight }}
-        aria-live="polite"
-      >
-        {renderResponse(response, busy, matchedSection, performScroll)}
+    <div className={`chat-widget ${isDarkMode ? '' : 'chat-widget--light'}`} data-testid="lav-root" role="region" aria-label="AI assistant">
+
+      {/* ── Encabezado del chat ── */}
+      <div className="chat-header">
+        {/* Avatar 3D pequeño en el header */}
+        <div className="chat-header-avatar">
+          <AvatarErrorBoundary>
+            <AvatarCanvas
+              modelUrl={cfg.modelUrl}
+              thinking={busy}
+              autoFit={{ maxFraction: 0.85 }}
+              onReady={() => { }}
+              onError={() => { }}
+            />
+          </AvatarErrorBoundary>
+        </div>
+        <div className="chat-header-info">
+          <span className="chat-header-name">Asistente IA</span>
+          <span className={`chat-header-status ${busy ? 'typing' : 'online'}`}>
+            {busy ? 'Escribiendo...' : 'En línea'}
+          </span>
+        </div>
       </div>
 
-      {/* 2 — 3D avatar (isolated: a WebGL/three.js failure must not take
-          down the chat UI — it degrades to a 2D placeholder instead). */}
-      <AvatarErrorBoundary>
-        <AvatarCanvas
-          modelUrl={cfg.modelUrl}
-          thinking={busy}
-          autoFit={{ maxFraction: 0.8 }}
-          onReady={() => setModelStatus('ready')}
-          onError={() => setModelStatus('error')}
-        />
-      </AvatarErrorBoundary>
+      {/* ── Cuerpo: historial de mensajes ── */}
+      <div className="chat-body" ref={chatBodyRef} data-testid="lav-bubble" aria-live="polite">
+        {messages.map((msg) => (
+          <div key={msg.id} className={`chat-message chat-message--${msg.role}`}>
+            <div className="chat-bubble">
+              {/* Si el mensaje del asistente tiene una sección referenciada, la resaltamos */}
+              {msg.role === 'assistant' && msg.sectionRef
+                ? renderWithSectionLink(msg.text, msg.sectionRef, performScroll)
+                : msg.text
+              }
+            </div>
+          </div>
+        ))}
 
-      {/* 3 — Question input */}
-      <form className="lav-input-row" onSubmit={submit}>
+        {/* Texto parcial mientras la IA escribe (streaming) */}
+        {busy && streamingText && (
+          <div className="chat-message chat-message--assistant">
+            <div className="chat-bubble chat-bubble--streaming">
+              {streamingText}
+              <span className="chat-cursor">▋</span>
+            </div>
+          </div>
+        )}
+
+        {/* Indicador de "pensando" si no llegó texto aún */}
+        {busy && !streamingText && (
+          <div className="chat-message chat-message--assistant">
+            <div className="chat-bubble chat-bubble--thinking">
+              <span className="dot"></span>
+              <span className="dot"></span>
+              <span className="dot"></span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ── Error ── */}
+      {error && (
+        <div className="chat-error" data-testid="lav-error" role="alert">⚠ {error}</div>
+      )}
+
+      {/* ── Input de escritura ── */}
+      <form className="chat-input-row" onSubmit={submit}>
         <input
-          ref={inputRef}
-          className="lav-input"
+          className="chat-input"
           data-testid="lav-input"
           value={input}
-          placeholder="Pregunta sobre este Port-Folio..."
+          placeholder="Preguntá sobre este portfolio..."
           onChange={(e) => setInput(e.target.value)}
           disabled={busy}
-          aria-label="Ask the assistant"
+          aria-label="Pregunta al asistente"
         />
-        <button className="lav-send" data-testid="lav-send" type="submit" disabled={busy || !input.trim()}>
-          {busy ? '…' : 'Ask'}
+        <button
+          className="chat-send-btn"
+          data-testid="lav-send"
+          type="submit"
+          disabled={busy || !input.trim()}
+          aria-label="Enviar"
+        >
+          ➤
         </button>
       </form>
-
-      {error && (
-        <div className="lav-error" data-testid="lav-error" role="alert">{error}</div>
-      )}
     </div>
   );
 }
 
-/**
- * Render the response, turning any referenced section title into an inline
- * clickable highlight (so the auto-scroll is visible to the user too).
- * Falls back to plain text with no matched section.
- */
-function renderResponse(text, busy, matchedSection, performScroll) {
-  const body = busy && !text ? '…' : displayMarkdown(text) || '…';
-  if (!matchedSection) {
-    return <span data-testid="lav-response-text">{body}</span>;
-  }
-  // Highlight the first occurrence of the matched section's title/alias.
-  const title = matchedSection.title;
-  const lower = body.toLowerCase();
-  const tLower = (title || '').toLowerCase();
-  const at = tLower ? lower.indexOf(tLower) : -1;
-  if (at === -1) return <span data-testid="lav-response-text">{body}</span>;
+// ── Función auxiliar para resaltar el link de la sección ──
+function renderWithSectionLink(text, section, performScroll) {
+  const lower = text.toLowerCase();
+  const titleLower = (section.title || '').toLowerCase();
+  const at = titleLower ? lower.indexOf(titleLower) : -1;
+  if (at === -1) return <span>{text}</span>;
   return (
-    <span data-testid="lav-response-text">
-      {body.slice(0, at)}
+    <span>
+      {text.slice(0, at)}
       <span
-        className="lav-bubble-section-link"
+        className="chat-section-link"
         data-testid="lav-section-link"
-        onClick={() => performScroll(matchedSection)}
-        title={`Go to ${title}`}
+        onClick={() => performScroll(section)}
+        title={`Ir a ${section.title}`}
       >
-        {body.slice(at, at + (title || '').length)}
+        {text.slice(at, at + section.title.length)}
       </span>
-      {body.slice(at + (title || '').length)}
+      {text.slice(at + section.title.length)}
     </span>
   );
 }

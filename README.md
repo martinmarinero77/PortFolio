@@ -1,16 +1,35 @@
-# React + Vite
+# Portfolio Personal — Martín Marinero
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Este es el repositorio de mi portfolio personal desarrollado como proyecto integrador para la materia de Front-End.
 
-Currently, two official plugins are available:
+## 🚀 Tecnologías Utilizadas
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+* **React 19** (Librería principal)
+* **Vite** (Entorno de desarrollo y empaquetador)
+* **Bootstrap 5** (Framework CSS para la grilla y utilidades)
+* **CSS Vanilla** (Estilos personalizados, variables, glassmorphism)
+* **Typewriter-effect** (Animaciones de texto)
+* **Three.js / React Three Fiber** (Para el avatar 3D del asistente virtual)
 
-## React Compiler
+## 🛠️ Cómo ejecutar este proyecto localmente
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Sigue estos pasos para correr el entorno de desarrollo en tu computadora:
 
-## Expanding the Oxlint configuration
+1. Clona este repositorio o descarga los archivos.
+2. Abre una terminal en la carpeta raíz del proyecto (`mi_app`).
+3. Instala las dependencias necesarias ejecutando:
+   \`\`\`bash
+   npm install
+   \`\`\`
+4. Inicia el servidor de desarrollo local ejecutando:
+   \`\`\`bash
+   npm run dev
+   \`\`\`
+5. Abre tu navegador en la URL que aparece en la terminal (usualmente `http://localhost:5173`).
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## ✨ Características de Accesibilidad (A11y)
+Se han implementado mejoras siguiendo los estándares WCAG 2.1:
+- Jerarquía semántica de encabezados (h1 a h3).
+- Relaciones de contraste dinámicas adaptadas al modo claro y oscuro.
+- Soporte para preferencias de reducción de movimiento (\`prefers-reduced-motion\`).
+- *Skip link* para navegación rápida por teclado.

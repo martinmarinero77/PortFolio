@@ -1,13 +1,30 @@
+/* ===== VARIABLES GLOBALES DE DISEÑO ===== */
+:root {
+    --color-terracota: #c17a5e;
+    /* Color principal de la paleta */
+    --color-terracota-oscuro: #9a4f2f;
+    /* Terracota con mayor contraste */
+    --color-terracota-claro: #e09a78;
+    /* Terracota más suave */
+    --color-terracota-grad: #a85e42;
+    /* Para gradientes */
+    --color-fondo-oscuro: #121212;
+    /* Fondo modo oscuro */
+    --color-amarillo: #ffc107;
+    /* Amarillo Bootstrap (Typewriter) */
+    --color-blanco: #ffffff;
+}
+
 /* 1. Scroll suave para los enlaces internos (anclas) */
 html {
     scroll-behavior: smooth;
-    background-color: #121212;
+    background-color: var(--color-fondo-oscuro);
     /* Fondo muy oscuro, estilo premium */
 }
 
 body {
-    background-color: #121212;
-    color: #ffffff;
+    background-color: var(--color-fondo-oscuro);
+    color: var(--color-blanco);
 }
 
 /* 2. Efecto Glassmorphism para el Navbar */
@@ -27,8 +44,8 @@ body {
 .card-hover:hover {
     transform: translateY(-8px);
     /* Eleva la tarjeta */
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4) !important;
-    border-color: #ffc107 !important;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    border-color: var(--color-amarillo);
     /* Borde amarillo sutil */
 }
 
@@ -36,7 +53,7 @@ body {
 .typewriter-text {
     overflow: hidden;
     /* Oculta el texto que todavía no se "tipeó" */
-    border-right: .15em solid #ffc107;
+    border-right: .15em solid var(--color-amarillo);
     /* El cursor amarillo */
     white-space: nowrap;
     /* Evita que el texto baje de línea */
@@ -66,7 +83,7 @@ body {
     }
 
     50% {
-        border-color: #ffc107;
+        border-color: var(--color-amarillo);
     }
 }
 
@@ -75,7 +92,7 @@ body {
 /* 5. Navbar flotante (estilo píldora) */
 .floating-nav {
     border-radius: 50px;
-    margin-top: 1rem !important;
+    margin-top: 1rem;
     padding: 0.5rem 1.5rem;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     /* Transición suave para el cambio de tema */
@@ -84,7 +101,7 @@ body {
 
 /* 6. Texto con gradiente de color moderno */
 .text-gradient {
-    background: linear-gradient(90deg, #ffc107 0%, #ff5722 100%);
+    background: linear-gradient(90deg, var(--color-amarillo) 0%, #ff5722 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -95,8 +112,11 @@ body {
 /* ===== SECCIÓN WELCOME / HERO ===== */
 /* Imagen de perfil circular con glow terracota */
 .hero-img {
-    width: 280px;
-    height: 280px;
+    /* máximo 280px, pero no más del 75% del ancho de pantalla */
+    width: min(280px, 75vw);
+    height: auto;
+    /* mantiene la forma cuadrada/circular */
+    aspect-ratio: 1;
     object-fit: cover;
     border-radius: 50%;
     box-shadow: 0 0 40px rgba(193, 122, 94, 0.6),
@@ -121,7 +141,7 @@ body {
 
 /* La tarjeta blob orgánica */
 .blob-card {
-    background-color: #c17a5e;
+    background-color: var(--color-terracota);
     color: white;
     border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
     padding: 2.5rem 2rem;
@@ -171,7 +191,7 @@ body {
 
 /* El contenido del modal */
 .modal-content-custom {
-    background-color: #c17a5e;
+    background-color: var(--color-terracota);
     color: white;
     border-radius: 20px;
     padding: 2.5rem;
@@ -254,7 +274,7 @@ body {
     letter-spacing: 0.2em;
     text-transform: uppercase;
     font-weight: 700;
-    color: #c17a5e;
+    color: var(--color-terracota-oscuro);
     margin-bottom: 1.5rem;
 }
 
@@ -284,4 +304,194 @@ body {
     font-weight: 600;
     letter-spacing: 0.05em;
     text-transform: uppercase;
+}
+
+/* ===== SECCIÓN PROYECTOS ===== */
+
+.project-card {
+    border-radius: 20px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+}
+
+.project-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 40px rgba(193, 122, 94, 0.25);
+}
+
+/* Franja de acento terracota en la parte superior */
+.project-card-accent {
+    height: 5px;
+    background: linear-gradient(90deg, var(--color-terracota), var(--color-terracota-claro));
+    width: 100%;
+}
+
+.project-card-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.project-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: rgba(193, 122, 94, 0.15);
+    color: var(--color-terracota);
+    border: 1px solid rgba(193, 122, 94, 0.3);
+    border-radius: 50px;
+    padding: 3px 12px;
+    margin-bottom: 1rem;
+    width: fit-content;
+}
+
+.project-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+}
+
+.project-desc {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    flex: 1;
+    /* empuja los botones hacia abajo */
+    margin-bottom: 1.25rem;
+}
+
+/* Botones de GitHub y Demo */
+.project-actions {
+    display: flex;
+    gap: 0.6rem;
+}
+
+.btn-project {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-project--outline {
+    background: transparent;
+    border: 1px solid rgba(193, 122, 94, 0.4);
+    color: var(--color-terracota);
+}
+
+.btn-project--outline:hover {
+    background: rgba(193, 122, 94, 0.1);
+    border-color: var(--color-terracota);
+    color: var(--color-terracota);
+}
+
+.btn-project--filled {
+    background: linear-gradient(135deg, var(--color-terracota), var(--color-terracota-grad));
+    color: var(--color-blanco);
+}
+
+.btn-project--filled:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 14px rgba(193, 122, 94, 0.5);
+    color: var(--color-blanco);
+}
+
+/* Botones de filtro modernos */
+.filter-btn {
+    padding: 8px 20px;
+    border-radius: 50px;
+    border: 1px solid rgba(193, 122, 94, 0.35);
+    background: transparent;
+    color: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+    background: rgba(193, 122, 94, 0.12);
+    border-color: var(--color-terracota);
+}
+
+.filter-btn--active {
+    background: linear-gradient(135deg, var(--color-terracota), var(--color-terracota-grad));
+    color: var(--color-blanco);
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(193, 122, 94, 0.4);
+}
+
+/* ===== SKIP LINK DE ACCESIBILIDAD ===== */
+.skip-link {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99999;
+    padding: 12px 24px;
+    background: var(--color-terracota-oscuro);
+    color: var(--color-blanco);
+    font-weight: 700;
+    border-radius: 0 0 12px 12px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: top 0.2s;
+}
+
+/* ===== FOOTER — Botones de redes sociales ===== */
+.footer-social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(193, 122, 94, 0.15);
+    color: inherit;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.footer-social-btn:hover {
+    background: rgba(193, 122, 94, 0.4);
+    transform: translateY(-3px);
+}
+
+/* ===== ACCESIBILIDAD: REDUCIR MOVIMIENTO ===== */
+/* Se activa cuando el usuario eligió "Reducir movimiento" en el Sistema Operativo */
+@media (prefers-reduced-motion: reduce) {
+
+    /* 1. Desactivar todas las transiciones suaves */
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+
+    /* 2. Detener el scroll suave (puede causar mareos) */
+    html {
+        scroll-behavior: auto;
+    }
+
+    /* 3. Detener las animaciones de los modales */
+    .modal-overlay,
+    .modal-content-custom {
+        animation: none;
+    }
 }
