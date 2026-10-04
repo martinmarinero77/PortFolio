@@ -17,13 +17,13 @@ function About({ isDarkMode }) {
             id: 'educacion',
             icono: '🎓',
             titulo: 'Educación',
-            descripcion: 'Tecnicatura Universitaria en Desarrollo Web (2024 - 2026). Aprendiendo Front-End con React y Bootstrap, Back-End con Node.js y bases de datos SQL. También completé varios cursos online sobre JavaScript moderno y diseño de interfaces.'
+            descripcion: 'Tecnicatura Universitaria en Programación Web (2023 - 2026). Aprendiendo Front-End con React y Stvelte, Back-End con .NET, Laravel y bases de datos SQL. También completé varios cursos online sobre JavaScript moderno y diseño de interfaces.'
         },
         {
             id: 'experiencia',
             icono: '💼',
             titulo: 'Experiencia',
-            descripcion: 'Proyectos Académicos (2025 - Actualidad): Desarrollo de un Dashboard financiero interactivo usando Bootstrap y la API de Polygon.io. También trabajé en un sistema de turnos y un clon de e-commerce como práctica intensiva de Front-End.'
+            descripcion: 'Proyectos Académicos (2024 - Actualidad): Actualizacion de dependencias y refactorizacion de codigo de un proyecto Antiguo usando Bootstrap y la API de Polygon.io. También trabajé en un sistema para un Instituto para chicos con "TEA" y en un sistema de turnos para complejos deportivos. Como hobby, desarrolle una app para gestionar alquileres en un salon de eventos, con un asistente de IA para Wsp.'
         }
     ];
 
