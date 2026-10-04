@@ -62,39 +62,33 @@ function Projects({ isDarkMode }) {
     const portfolio = [
         {
             id: 1,
-            titulo: "E-Commerce Deportivo",
+            titulo: "Instituto de Salud Teassist",
             categoria: "Académico",
-            descripcion: "Tienda online con carrito de compras, filtros por categoría y diseño responsivo.",
+            descripcion: "Sistema para un Instituto de salud para chichos con 'TEA'. Con administracion de pacientes y Profesionales",
         },
         {
             id: 2,
-            titulo: "Sistema de Turnos",
+            titulo: "Sistema de Turnos en Complejos Deportivos",
             categoria: "Académico",
-            descripcion: "Aplicación para gestión de turnos con panel de administración y base de datos.",
+            descripcion: "Aplicación para gestión de turnos, con sistema de usuarios, para poder gestionar las reservas de los clientes y la disponibilidad de las canchas. Con la posibilidad de fromar una gran comunidad Deportiva",
         },
         {
             id: 3,
-            titulo: "App del Clima",
-            categoria: "Pasatiempo",
-            descripcion: "Consulta el clima en tiempo real usando una API pública con búsqueda por ciudad.",
+            titulo: "Sistema de Empresa de Logística y mensajería ",
+            categoria: "Académico",
+            descripcion: "Sistema diseñado para brindar una gestión integral y centralizada de todas las etapas del servicio logístico, desde la recepción del pedido hasta la entrega final al destinatario.",
         },
         {
             id: 4,
-            titulo: "Clon de Netflix",
+            titulo: "Asistente Virtual para Salón de Eventos",
             categoria: "Pasatiempo",
-            descripcion: "Interfaz visual inspirada en Netflix con catálogo de películas y trailers.",
+            descripcion: "App para manejar un asistente de IA para Wsp de un salon de eventos y para poder gestionar las reservas de los clientes",
         },
         {
             id: 5,
-            titulo: "Calculadora Avanzada",
-            categoria: "Académico",
-            descripcion: "Calculadora con historial de operaciones, soporte de paréntesis y temas visuales.",
-        },
-        {
-            id: 6,
-            titulo: "Bot de Discord",
+            titulo: "Simon-Says",
             categoria: "Pasatiempo",
-            descripcion: "Bot personalizado para servidores de Discord con comandos y respuestas automáticas.",
+            descripcion: "Juego para poder jugar al juego de memoria Simon. Con registro de puntajes.",
         },
     ];
 
