@@ -218,6 +218,15 @@ body {
     line-height: 1;
 }
 
+/* Placeholder para el formulario en modo oscuro */
+.dark-placeholder::placeholder {
+    color: #a0a0a0;
+    /* Un gris claro legible. Puedes cambiar este color */
+    opacity: 1;
+    /* Asegura que el color se vea pleno (algunos navegadores le bajan la opacidad) */
+}
+
+
 /* Acento de color detrás de una palabra del título */
 .title-highlight {
     position: relative;

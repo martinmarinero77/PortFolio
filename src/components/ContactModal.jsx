@@ -74,7 +74,7 @@ function ContactModal({ isDarkMode, isOpen, onClose }) {
                             type="text"
                             required
                             placeholder="Tu nombre"
-                            className="form-control mt-1"
+                            className={`form-control mt-1 ${isDarkMode ? 'dark-placeholder' : ''}`}
                             style={{ background: isDarkMode ? '#2a2a3e' : '#f8f9fa', color: isDarkMode ? '#fff' : '#333', border: '1px solid rgba(193,122,94,0.3)' }}
                         />
                     </div>
@@ -91,7 +91,7 @@ function ContactModal({ isDarkMode, isOpen, onClose }) {
                             type="email"
                             required
                             placeholder="tu@email.com"
-                            className="form-control mt-1"
+                            className={`form-control mt-1 ${isDarkMode ? 'dark-placeholder' : ''}`}
                             style={{ background: isDarkMode ? '#2a2a3e' : '#f8f9fa', color: isDarkMode ? '#fff' : '#333', border: '1px solid rgba(193,122,94,0.3)' }}
                         />
                     </div>
@@ -108,7 +108,7 @@ function ContactModal({ isDarkMode, isOpen, onClose }) {
                             required
                             rows={4}
                             placeholder="¿En qué puedo ayudarte?"
-                            className="form-control mt-1"
+                            className={`form-control mt-1 ${isDarkMode ? 'dark-placeholder' : ''}`}
                             style={{ background: isDarkMode ? '#2a2a3e' : '#f8f9fa', color: isDarkMode ? '#fff' : '#333', border: '1px solid rgba(193,122,94,0.3)', resize: 'vertical' }}
                         />
                     </div>

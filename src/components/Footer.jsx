@@ -1,6 +1,6 @@
 function Footer({ isDarkMode, onContactOpen }) {
     return (
-        <footer className={`py-5 mt-auto ${isDarkMode ? 'bg-dark text-white' : 'bg-light text-dark'}`}>
+        <footer id="footer" className={`py-5 mt-auto ${isDarkMode ? 'bg-dark text-white' : 'bg-light text-dark'}`}>
             <div className="container">
                 <div className="row align-items-center g-4">
 

@@ -26,6 +26,9 @@ export const Navbar = ({ isDarkMode, toggleTheme }) => {
                         <li className="nav-item">
                             <a className="nav-link" href="#proyectos">Proyectos</a>
                         </li>
+                        <li className="nav-item">
+                            <a className="nav-link" href="#footer">Contacto</a>
+                        </li>
                     </ul>
 
                     {/* 2. Nuestro botón para cambiar de tema */}

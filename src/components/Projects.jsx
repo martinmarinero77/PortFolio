@@ -37,7 +37,7 @@ function ProjectCard({ proyecto, isDarkMode }) {
                         {proyecto.titulo}
                     </h3>
 
-                    <p className={`project-desc ${isDarkMode ? 'text-secondary' : 'text-muted'}`}>
+                    <p className={`project-desc ${isDarkMode ? 'text-white' : 'text-muted'}`}>
                         {proyecto.descripcion}
                     </p>
 
@@ -101,7 +101,7 @@ function Projects({ isDarkMode }) {
         <section id="proyectos" className={`py-5 ${isDarkMode ? 'bg-dark text-white' : 'bg-light text-dark'}`}>
             <div className="container py-5">
                 <h2 className="text-center mb-2 display-5 fw-bold">Mis Proyectos</h2>
-                <p className={`text-center mb-5 ${isDarkMode ? 'text-secondary' : 'text-muted'}`}>
+                <p className={`text-center mb-5 ${isDarkMode ? 'text-white' : 'text-muted'}`}>
                     Una selección de lo que construí durante la carrera y por cuenta propia.
                 </p>
 

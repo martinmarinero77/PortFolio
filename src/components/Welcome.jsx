@@ -21,7 +21,7 @@ function Welcome({ isDarkMode, onContactOpen }) {
                         </h1>
 
                         {/* Efecto Typewriter de la librería npm */}
-                        <div className="fs-4 fw-normal mb-4 text-secondary">
+                        <div className={`fs-4 fw-normal mb-4 ${isDarkMode ? 'text-white' : 'text-muted'}`}>
                             <Typewriter
                                 options={{
                                     strings: [
@@ -41,7 +41,7 @@ function Welcome({ isDarkMode, onContactOpen }) {
                             Un gusto que estés por acá. Soy un apasionado por la tecnología
                             y la creación de soluciones digitales.
                         </p>
-                        <p className="lead mb-5 text-secondary">
+                        <p className="lead mb-5">
                             Si te interesa saber lo que hago o mis proyectos,
                             ¡navegá por la web!
                         </p>
