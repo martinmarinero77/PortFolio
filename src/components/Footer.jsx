@@ -15,7 +15,7 @@ function Footer({ isDarkMode, onContactOpen }) {
                     {/* Columna centro: redes sociales */}
                     <div className="col-md-4 d-flex justify-content-center gap-3">
                         <a
-                            href="https://github.com/TU_USUARIO"
+                            href="https://github.com/Martinmarinero77"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="footer-social-btn"
@@ -24,7 +24,7 @@ function Footer({ isDarkMode, onContactOpen }) {
                             <i className="devicon-github-original" style={{ fontSize: '1.5rem' }}></i>
                         </a>
                         <a
-                            href="https://www.linkedin.com/in/TU_USUARIO"
+                            href="https://www.linkedin.com/in/martin-marinero-aguilera/"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="footer-social-btn"
