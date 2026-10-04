@@ -64,13 +64,13 @@ function Projects({ isDarkMode }) {
             id: 1,
             titulo: "Instituto de Salud Teassist",
             categoria: "Académico",
-            descripcion: "Sistema para un Instituto de salud para chichos con 'TEA'. Con administracion de pacientes y Profesionales",
+            descripcion: "Sistema para un Instituto de salud para chichos con 'TEA'. Con administracion de pacientes y Profesionales.",
         },
         {
             id: 2,
             titulo: "Sistema de Turnos en Complejos Deportivos",
             categoria: "Académico",
-            descripcion: "Aplicación para gestión de turnos, con sistema de usuarios, para poder gestionar las reservas de los clientes y la disponibilidad de las canchas. Con la posibilidad de fromar una gran comunidad Deportiva",
+            descripcion: "Aplicación para gestión de turnos, con sistema de usuarios, para poder gestionar las reservas de los clientes y la posibilidad de formar una gran comunidad Deportiva.",
         },
         {
             id: 3,
@@ -82,7 +82,7 @@ function Projects({ isDarkMode }) {
             id: 4,
             titulo: "Asistente Virtual para Salón de Eventos",
             categoria: "Pasatiempo",
-            descripcion: "App para manejar un asistente de IA para Wsp de un salon de eventos y para poder gestionar las reservas de los clientes",
+            descripcion: "App para manejar un asistente de IA para Wsp de un salon de eventos y para poder gestionar las reservas de los clientes.",
         },
         {
             id: 5,
