@@ -118,6 +118,8 @@ body {
     /* mantiene la forma cuadrada/circular */
     aspect-ratio: 1;
     object-fit: cover;
+    /*Primer valor es X (Horizontal) y el segundo es Y (Vertical)*/
+    object-position: center 20%;
     border-radius: 50%;
     box-shadow: 0 0 40px rgba(193, 122, 94, 0.6),
         0 0 80px rgba(193, 122, 94, 0.3);

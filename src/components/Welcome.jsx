@@ -1,5 +1,5 @@
 import Typewriter from 'typewriter-effect';
-import heroImg from '../assets/hero.png';
+import heroImg from '../assets/hero.jpg';
 
 function Welcome({ isDarkMode, onContactOpen }) {
     return (
