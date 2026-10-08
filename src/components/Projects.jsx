@@ -28,6 +28,24 @@ function ProjectCard({ proyecto, isDarkMode }) {
                 <div className="project-card-accent"></div>
 
                 <div className="project-card-body">
+                    {/* Imagen del proyecto */}
+                    {proyecto.imagen && (
+                        <div style={{ overflow: 'hidden', borderRadius: '8px 8px 0 0', height: '180px' }}>
+                            <img
+                                src={proyecto.imagen}
+                                alt={proyecto.titulo}
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'contain',
+                                    transition: 'transform 0.3s ease'
+                                }}
+                                onMouseOver={e => e.target.style.transform = 'scale(1.5)'}
+                                onMouseOut={e => e.target.style.transform = 'scale(1.0)'}
+                            />
+                        </div>
+                    )}
+
                     {/* Badge de categoría */}
                     <span className="project-badge">
                         {categoriaIcono[proyecto.categoria] || '📁'} {proyecto.categoria}
@@ -43,12 +61,16 @@ function ProjectCard({ proyecto, isDarkMode }) {
 
                     {/* Botones de acción */}
                     <div className="project-actions">
-                        <a href={proyecto.github || '#'} className="btn-project btn-project--outline">
-                            <i className="devicon-github-original"></i> GitHub
-                        </a>
-                        <a href={proyecto.demo || '#'} className="btn-project btn-project--filled">
-                            Ver Demo →
-                        </a>
+                        {proyecto.github && (
+                            <a href={proyecto.github} className="btn-project btn-project--outline" target="_blank" rel="noreferrer">
+                                <i className="devicon-github-original"></i> GitHub
+                            </a>
+                        )}
+                        {proyecto.demo && (
+                            <a href={proyecto.demo} className="btn-project btn-project--filled" target="_blank" rel="noreferrer">
+                                Ver Demo →
+                            </a>
+                        )}
                     </div>
                 </div>
             </div>
@@ -65,30 +87,40 @@ function Projects({ isDarkMode }) {
             titulo: "Instituto de Salud Teassist",
             categoria: "Académico",
             descripcion: "Sistema para un Instituto de salud para chichos con 'TEA'. Con administracion de pacientes y Profesionales.",
+            imagen: "/images/teassist.gif",
+            github: "https://github.com/martinmarinero77/Teassist",
+            demo: "https://teassist-qu92xqqsx-martinmarinero77-3827.vercel.app/",
         },
         {
             id: 2,
             titulo: "Sistema de Turnos en Complejos Deportivos",
             categoria: "Académico",
             descripcion: "Aplicación para gestión de turnos, con sistema de usuarios, para poder gestionar las reservas de los clientes y la posibilidad de formar una gran comunidad Deportiva.",
+            imagen: "/images/PlayTime.gif",
+            github: "https://github.com/martinmarinero77/playtime-java",
         },
         {
             id: 3,
             titulo: "Sistema de Empresa de Logística y mensajería ",
             categoria: "Académico",
             descripcion: "Sistema diseñado para brindar una gestión integral y centralizada de todas las etapas del servicio logístico, desde la recepción del pedido hasta la entrega final al destinatario.",
+            imagen: "/images/logistica.gif",
+            github: "https://github.com/martinmarinero77/LogiPack",
         },
         {
             id: 4,
             titulo: "Asistente Virtual para Salón de Eventos",
             categoria: "Pasatiempo",
             descripcion: "App para manejar un asistente de IA para Wsp de un salon de eventos y para poder gestionar las reservas de los clientes.",
+            imagen: "/images/asistente.gif",
         },
         {
             id: 5,
             titulo: "Simon-Says",
             categoria: "Pasatiempo",
             descripcion: "Juego para poder jugar al juego de memoria Simon. Con registro de puntajes.",
+            imagen: "/images/simon.gif",
+            github: "https://github.com/martinmarinero77/SimonSays",
         },
     ];
 
